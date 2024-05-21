@@ -9,17 +9,18 @@ import org.springframework.stereotype.Repository;
 
 import com.hexhotel.model.Room;
 @Repository
+
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-	@Query("SELECT DISTINCT r.roomType from Room r")
-	List<String> findDistinctRoomTypes();
-	
-	@Query("SELECT r FROM Room r " + 
-	"WHERE r.roomType LIKE %:roomType% " +
-			"AND r.id NOT IN(" + 
-			" SELECT br.room.id FROM BookedRoom br "+
-			"WHERE ((br.checkInData <= :checkOutDate AND (br.checkOutDate  >= :checkInDate))"+
-			")")
-			
-List<Room> findAvailableRoomsByDatesAndType(LocalDate checkInDate,LocalDate checkOutDate,String roomType);
+    @Query("SELECT DISTINCT r.roomType FROM Room r")
+    List<String> findDistinctRoomTypes();
+
+    @Query(" SELECT r FROM Room r " +
+            " WHERE r.roomType LIKE %:roomType% " +
+            " AND r.id NOT IN (" +
+            "  SELECT br.room.id FROM BookedRoom br " +
+            "  WHERE ((br.checkInDate <= :checkOutDate) AND (br.checkOutDate >= :checkInDate))" +
+            ")")
+
+    List<Room> findAvailableRoomsByDatesAndType(LocalDate checkInDate, LocalDate checkOutDate, String roomType);
 }
